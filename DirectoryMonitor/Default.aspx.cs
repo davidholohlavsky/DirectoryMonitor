@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.IO;
-using System.Security.Permissions;
+using System.Linq;
 using System.Text;
+using System.Web.UI.WebControls;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -70,7 +67,7 @@ namespace DirectoryMonitor
                 if (newFilesLastWriteTimeList[indexNameNew].Equals(oldFilesLastWriteTimeList[indexNameOld]))
                 {
                   Label1.Text = "žádná změna";
-                  newVersionOfFileList = oldFileVersionList;
+                  newVersionOfFileList[indexNameNew] = oldFileVersionList[indexNameOld];
                 }
                 else
                 {
@@ -84,6 +81,7 @@ namespace DirectoryMonitor
                 sb.Append($"[D] {oldFile}<br />");
               }
             }
+            int number = newVersionOfFileList.Count;
             foreach (string newFile in newFilesNamesList)
             {
               if (!oldFilesNamesList.Contains(newFile))
@@ -131,10 +129,10 @@ namespace DirectoryMonitor
     }
     public static void ProcessDirectory(string targetDirectory, List<string> fileEntries, List<string> subdirectoryEntries)
     {
-      //system.stackoverflowexception
       fileEntries.AddRange(Directory.GetFiles(targetDirectory).ToList());
       subdirectoryEntries.AddRange(Directory.GetDirectories(targetDirectory).ToList());
-      foreach(string subdirectory in subdirectoryEntries)
+      List<string> subdirectoryEntriesHelper = Directory.GetDirectories(targetDirectory).ToList();
+      foreach (string subdirectory in subdirectoryEntriesHelper)
       {
         ProcessDirectory(subdirectory, fileEntries, subdirectoryEntries);
       }
